@@ -59,12 +59,12 @@ class Extension {
 
     const data = fs.readFileSync(src);
 
-    if (fs.existsSync(dst)) {
-      const current = fs.readFileSync(dst);
-      if (current.compare(data) === 0) {
-        return false;
-      }
+    // if the file exists and hasn't changed, exit
+    if (fs.existsSync(dst) && fs.readFileSync(dst).compare(data) === 0) {
+      return false;
     }
+
+    // else copy the module
     fs.writeFileSync(dst, data);
     return true;
   }
