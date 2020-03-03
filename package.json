@@ -13,7 +13,7 @@
   "activationEvents": [
     "*"
   ],
-  "main": "./out/extension.js",
+  "main": "./out/src/extension.js",
   "contributes": {
     "commands": [
       {
@@ -38,8 +38,13 @@
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
     "eslint": "^6.8.0",
+    "eslint-config-prettier": "6.10.0",
+    "eslint-plugin-import": "2.20.1",
+    "eslint-plugin-jsdoc": "21.0.0",
+    "eslint-plugin-prettier": "3.1.2",
     "glob": "^7.1.6",
     "mocha": "^7.0.1",
+    "prettier": "1.19.1",
     "typescript": "^3.7.5",
     "vscode-test": "^1.3.0"
   },
