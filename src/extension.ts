@@ -1,11 +1,11 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as vscode from "vscode";
-import * as path from "path";
-import * as fs from "fs";
+import * as path from 'path';
+import * as fs from 'fs';
+import * as vscode from 'vscode';
 
-const publisher = "skoshy";
-const scriptName = "nice-index";
+const publisher = 'skoshy';
+const scriptName = 'nice-index';
 
 interface FolderMap {
   [key: string]: string;
@@ -25,7 +25,7 @@ interface API {
 function mkdirRecursive(p: string) {
   if (!fs.existsSync(p)) {
     if (path.parse(p).root !== p) {
-      let parent = path.join(p, "..");
+      const parent = path.join(p, '..');
       mkdirRecursive(parent);
     }
     fs.mkdirSync(p);
@@ -46,21 +46,21 @@ class Extension {
   }
 
   get sourcePath() {
-    return path.join(this.context.extensionPath, "modules");
+    return path.join(this.context.extensionPath, 'out', 'modules');
   }
 
   get modulesPath() {
-    return path.join(this.context.globalStoragePath, "modules");
+    return path.join(this.context.globalStoragePath, 'modules');
   }
 
   private copyModule(name: string) {
-    let src = path.join(this.sourcePath, name);
-    let dst = path.join(this.modulesPath, name);
+    const src = path.join(this.sourcePath, name);
+    const dst = path.join(this.modulesPath, name);
 
-    let data = fs.readFileSync(src);
+    const data = fs.readFileSync(src);
 
     if (fs.existsSync(dst)) {
-      let current = fs.readFileSync(dst);
+      const current = fs.readFileSync(dst);
       if (current.compare(data) === 0) {
         return false;
       }
@@ -77,54 +77,57 @@ class Extension {
   }
 
   async start() {
-    let freshStart = !fs.existsSync(this.modulesPath);
+    const freshStart = !fs.existsSync(this.modulesPath);
     mkdirRecursive(this.modulesPath);
 
     // copy the modules to global storage path, which unlike extension path is not versioned
     // and will work after update
 
-    let browser = [
-      this.copyModule("nice-index.css"),
-      this.copyModule("nice-index.js"),
-      this.copyModule("tabs.js")
+    const browser = [
+      this.copyModule('nice-index.css'),
+      this.copyModule('nice-index.js'),
+      this.copyModule('tabs.js'),
     ];
 
-    let mainProcess = [this.copyModule("main.js"), this.copyModule("utils.js")];
+    const mainProcess = [
+      this.copyModule('main.js'),
+      this.copyModule('utils.js'),
+    ];
 
-    let updatedBrowser = browser.includes(true);
-    let updatedMainProcess = mainProcess.includes(true);
+    const updatedBrowser = browser.includes(true);
+    const updatedMainProcess = mainProcess.includes(true);
 
     if (!freshStart && this.haveStylesheetCustomizations) {
       if (updatedMainProcess) {
-        let res = await vscode.window.showInformationMessage(
+        const res = await vscode.window.showInformationMessage(
           `${scriptName} extension was updated. Your VSCode instance needs to be restarted`,
-          "Restart"
+          'Restart'
         );
-        if (res === "Restart") {
+        if (res === 'Restart') {
           this.promptRestart();
         }
       } else if (updatedBrowser) {
-        let res = await vscode.window.showInformationMessage(
+        const res = await vscode.window.showInformationMessage(
           `${scriptName} extension was updated. Your VSCode window needs to be reloaded.`,
-          "Reload Window"
+          'Reload Window'
         );
-        if (res === "Reload Window") {
-          vscode.commands.executeCommand("workbench.action.reloadWindow");
+        if (res === 'Reload Window') {
+          vscode.commands.executeCommand('workbench.action.reloadWindow');
         }
       }
     }
 
-    let monkeyPatch = vscode.extensions.getExtension("iocave.monkey-patch");
+    const monkeyPatch = vscode.extensions.getExtension('iocave.monkey-patch');
 
     if (monkeyPatch !== undefined) {
       await monkeyPatch.activate();
-      let exports: API = monkeyPatch.exports;
+      const exports: API = monkeyPatch.exports;
       exports.contribute(`${publisher}.${scriptName}`, {
         folderMap: {
-          "nice-index": this.modulesPath
+          'nice-index': this.modulesPath,
         },
-        browserModules: ["nice-index/nice-index"],
-        mainProcessModules: ["nice-index/main"]
+        browserModules: ['nice-index/nice-index'],
+        mainProcessModules: ['nice-index/main'],
       });
     } else {
       vscode.window.showWarningMessage(
@@ -135,22 +138,24 @@ class Extension {
 
   private async promptRestart() {
     // This is a hacky way to display the restart prompt
-    let v = vscode.workspace.getConfiguration().inspect("window.titleBarStyle");
+    const v = vscode.workspace
+      .getConfiguration()
+      .inspect('window.titleBarStyle');
     if (v !== undefined) {
-      let value = vscode.workspace
+      const value = vscode.workspace
         .getConfiguration()
-        .get("window.titleBarStyle");
+        .get('window.titleBarStyle');
       await vscode.workspace
         .getConfiguration()
         .update(
-          "window.titleBarStyle",
-          value === "native" ? "custom" : "native",
+          'window.titleBarStyle',
+          value === 'native' ? 'custom' : 'native',
           vscode.ConfigurationTarget.Global
         );
       vscode.workspace
         .getConfiguration()
         .update(
-          "window.titleBarStyle",
+          'window.titleBarStyle',
           v.globalValue,
           vscode.ConfigurationTarget.Global
         );
@@ -158,25 +163,25 @@ class Extension {
   }
 
   async configurationChanged(e: vscode.ConfigurationChangeEvent) {
-    let monkeyPatch = vscode.extensions.getExtension("iocave.monkey-patch");
+    const monkeyPatch = vscode.extensions.getExtension('iocave.monkey-patch');
     if (monkeyPatch !== undefined) {
       await monkeyPatch.activate();
-      let exports: API = monkeyPatch.exports;
+      const exports: API = monkeyPatch.exports;
       if (!exports.active()) {
-        let res = await vscode.window.showWarningMessage(
+        const res = await vscode.window.showWarningMessage(
           `Monkey Patch extension is not enabled. Please enable Monkey Patch in order to use ${scriptName}.`,
-          "Enable"
+          'Enable'
         );
-        if (res === "Enable") {
-          vscode.commands.executeCommand("iocave.monkey-patch.enable");
+        if (res === 'Enable') {
+          vscode.commands.executeCommand('iocave.monkey-patch.enable');
         }
       } else {
-        let res = await vscode.window.showInformationMessage(
+        const res = await vscode.window.showInformationMessage(
           `${scriptName} requires window reload`,
-          "Reload Window"
+          'Reload Window'
         );
-        if (res === "Reload Window") {
-          vscode.commands.executeCommand("workbench.action.reloadWindow");
+        if (res === 'Reload Window') {
+          vscode.commands.executeCommand('workbench.action.reloadWindow');
         }
       }
     }

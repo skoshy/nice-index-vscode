@@ -1,0 +1,25 @@
+.tabs-container[data-nice-index-has-index-tabs="true"]
+  [data-nice-index-is-index-tab="true"][data-nice-index-has-description-label="true"]
+  a.label-name {
+  display: none;
+}
+
+.tabs-container[data-nice-index-has-index-tabs="true"]
+  [data-nice-index-is-index-tab="true"][data-nice-index-has-description-label="true"]
+  .label-description {
+  font-size: 1em !important;
+  color: inherit !important;
+  margin-left: 0 !important;
+  opacity: 1 !important;
+}
+
+/*
+.tabs-container[data-nice-index-has-index-tabs="true"]
+  [data-nice-index-is-index-tab="true"][data-nice-index-has-description-label="true"]
+  .label-description:after {
+  content: "index";
+  margin-left: 0.5em;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+*/

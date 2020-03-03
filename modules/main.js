@@ -1,3 +1,4 @@
-define(["module"], function(module) {
-  "use strict";
+'use strict';
+define(['module'], function(module) {
+  'use strict';
 });
