@@ -46,7 +46,7 @@ class Extension {
   }
 
   get sourcePath() {
-    return path.join(this.context.extensionPath, 'out', 'modules');
+    return path.join(this.context.extensionPath, 'modules');
   }
 
   get modulesPath() {
