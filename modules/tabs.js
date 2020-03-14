@@ -1,6 +1,6 @@
 'use strict';
 const getAttributeNewValue = target => target.attributes['aria-label'].value;
-const isIndexFile = ariaLabel => ariaLabel.toLowerCase().includes('index.js');
+const isIndexFile = ariaLabel => !!ariaLabel.toLowerCase().match(/index\.\w+/);
 const createTabDiff = ({ type, target, newValue, oldValue }) => {
   return {
     type,
